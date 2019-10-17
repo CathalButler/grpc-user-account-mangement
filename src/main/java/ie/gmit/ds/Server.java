@@ -1,6 +1,7 @@
 package ie.gmit.ds;
 
 import io.grpc.ServerBuilder;
+
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -47,4 +48,4 @@ public class Server {
         server.blockUntilShutdown();
     }// End main method
 
-}
+}// End class

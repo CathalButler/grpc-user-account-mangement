@@ -24,10 +24,12 @@ public class Client {
 
     // Constructor
     public Client(String host, int port) {
+        // Creat a channel:
         channel = ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext()
                 .build();
+        // Create a stub & blocking stub with the channel
         asyncPasswordSerive = PasswordServiceGrpc.newStub(channel);
         syncPasswordService = PasswordServiceGrpc.newBlockingStub(channel);
     }// End Constructor
@@ -39,34 +41,35 @@ public class Client {
 
     // Hash Request
     public void hashRequest(UserHashRequest newUserRequest) {
+        // Logger
         logger.info("Client: Making hashing request with details: " + newUserRequest);
-        BoolValue result = BoolValue.newBuilder().setValue(false).build();
-        try {
-            result = syncPasswordService.hash(newUserRequest);
 
+        // Instance of response
+        UserHashResponse response;
+        try {
+            // Create the response to the
+            response = syncPasswordService.hash(newUserRequest);
+            //Print response
+            System.out.println(response);
         } catch (StatusRuntimeException ex) {
             logger.log(Level.WARNING, "RPC failed: {0}", ex.getStatus());
             return;
-        }
-        if (result.getValue()) {
-            logger.info("Successfully hashed users password " + newUserRequest);
-        } else {
-            logger.warning("Failed to hash password");
-        }
-
+        }// End try catch
     }// End method
 
 
     // Main method
     public static void main(String[] args) throws InterruptedException {
+        // Creat an instance of the Client and pass it the host and port:
         Client client = new Client("localhost", 50551);
 
+        // Creating a request to the Server:
         UserHashRequest requests = UserHashRequest.newBuilder()
                 .setUserId(1234)
                 .setPassword("yurtthecamel")
                 .build();
-
         try {
+            //Send request created above:
             client.hashRequest(requests);
         } finally {
             // Don't stop process, keep alive to receive async response
