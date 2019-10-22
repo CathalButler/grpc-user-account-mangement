@@ -1,4 +1,4 @@
-package ie.gmit.ds;
+package ie.gmit.ds.server;
 
 /* Cathal Butler | G00346889 - Distributed Systems Project
  * Model class for Hashed Data. This is used to make objects from the hashed Password and the salt.

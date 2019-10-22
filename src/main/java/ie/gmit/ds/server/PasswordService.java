@@ -1,6 +1,7 @@
-package ie.gmit.ds;
+package ie.gmit.ds.server;
 
 import com.google.protobuf.ByteString;
+import ie.gmit.ds.*;
 import io.grpc.stub.StreamObserver;
 
 /* Cathal Butler | G00346889 - Distributed Systems Project
@@ -12,6 +13,14 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
     public PasswordService() {
     }// End Constructor
 
+    /**
+     * Override method from PasswordServiceGrpc.PasswordServiceImplBase that handles a hash request from a client.
+     * Method makes a call to the Passwords class method hash to hash a password with a salt generated from the Passwords
+     * class and a password provided from the client.
+     *
+     * @param request from client
+     * @param responseObserver response to client
+     */
     @Override
     public void hash(UserHashRequest request, StreamObserver<UserHashResponse> responseObserver) {
         //Variables
@@ -30,6 +39,13 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
         responseObserver.onCompleted();
     }// End method
 
+    /**
+     * Override method from PasswordServiceGrpc.PasswordServiceImplBase that handles a validate request from a client.
+     * Method makes a call to the Passwords class method isExpectedPassword.
+     * Returns true if the given password and salt match the hashed value, false otherwise.
+     * @param request from client
+     * @param responseObserver response to client
+     */
     @Override
     public void validate(ValidateRequest request, StreamObserver<ValidateResponse> responseObserver) {
         // Variables

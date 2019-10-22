@@ -1,11 +1,12 @@
-package ie.gmit.ds;
+package ie.gmit.ds.client;
 
 import com.google.protobuf.ByteString;
+import ie.gmit.ds.*;
+import ie.gmit.ds.server.HashedData;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,6 +41,12 @@ public class Client {
     }// End method
 
     // Hash Request
+
+    /**
+     * Method that makes a hash request to the server with the params below
+     * @param userId
+     * @param password
+     */
     public void hashRequest(int userId, String password) {
         // Logger
         logger.info("\n\nClient: Making hashing request with details: User ID: " + userId + " password: " + password);
@@ -52,11 +59,7 @@ public class Client {
         try {
             // Make a request to the server hash method
             response = syncPasswordService.hash(request);
-            // Setting object property's
-            //hd.setSalt(response.getSalt());
-            //hd.setHashedPassword(response.getHashedPassword());
-            // Adding data to array list
-            //hashedDataArrayList.add(hd);
+            //Setting hashed password var and salt
             this.setHashedPassword(response.getHashedPassword());
             this.setSalt(response.getSalt());
         } catch (StatusRuntimeException ex) {
@@ -70,6 +73,12 @@ public class Client {
                 + response.getHashedPassword() + "\nSalt: " + response.getSalt());
     }// End method
 
+    /**
+     * Mehtod that makes a validate request to the server with the parameters below
+     * @param password
+     * @param hashedPassword
+     * @param salt
+     */
     public void validateRequest(String password, ByteString hashedPassword, ByteString salt) {
         // Logger
         logger.info("\n\nClient: Making Validation request with details Password: " + password + "\nHashed Password: "
@@ -117,9 +126,9 @@ public class Client {
         try {
             //Send request created above:
             // Hardcoded test data
-            client.hashRequest(1234, "yurtTheCamel");
+            client.hashRequest(1234, "yurt the world");
             //Run data through validate method
-            client.validateRequest("yurtTheCamel", client.getHashedPassword(), client.getSalt());
+            client.validateRequest("yurt the world", client.getHashedPassword(), client.getSalt());
         } finally {
             // Don't stop process, keep alive to receive async response
             Thread.currentThread().join();

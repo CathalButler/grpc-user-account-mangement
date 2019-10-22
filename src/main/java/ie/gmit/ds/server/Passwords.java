@@ -1,4 +1,4 @@
-package ie.gmit.ds;
+package ie.gmit.ds.server;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
