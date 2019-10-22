@@ -4,35 +4,37 @@ package ie.gmit.ds;
  * Model class for Hashed Data. This is used to make objects from the hashed Password and the salt.
  */
 
+import com.google.protobuf.ByteString;
+
 public class HashedData {
 
     // Member Variables
     // Array list to hold hashed password and the salt
-    private byte[] hashedPassword;
-    private byte[] salt;
+    private ByteString hashedPassword;
+    private ByteString salt;
 
     // Default Constructor
     public HashedData() {
     }
 
-    public HashedData(byte[] hashedPassword, byte[] salt) {
+    public HashedData(ByteString hashedPassword, ByteString salt) {
         this.hashedPassword = hashedPassword;
         this.salt = salt;
     }
 
-    public byte[] getHashedPassword() {
+    public ByteString getHashedPassword() {
         return hashedPassword;
     }
 
-    public void setHashedPassword(byte[] hashedPassword) {
+    public void setHashedPassword(ByteString hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
 
-    public byte[] getSalt() {
+    public ByteString getSalt() {
         return salt;
     }
 
-    public void setSalt(byte[] salt) {
+    public void setSalt(ByteString salt) {
         this.salt = salt;
     }
 }// End class

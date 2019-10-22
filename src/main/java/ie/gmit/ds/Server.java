@@ -15,7 +15,6 @@ public class Server {
     private static final Logger logger = Logger.getLogger(Server.class.getName());
     private static final int PORT = 50551;
 
-
     // Server Startup and shutdown methods
     private void start() throws IOException {
         grpcServer = ServerBuilder.forPort(PORT)
@@ -47,5 +46,4 @@ public class Server {
         server.start();
         server.blockUntilShutdown();
     }// End main method
-
 }// End class

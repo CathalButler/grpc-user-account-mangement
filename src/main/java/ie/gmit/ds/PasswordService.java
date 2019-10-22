@@ -45,6 +45,4 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
         // Complete response
         responseObserver.onCompleted();
     }// End method
-
-
 }// End class
