@@ -20,7 +20,6 @@ public class Client {
     private final PasswordServiceGrpc.PasswordServiceBlockingStub syncPasswordService;
     private static final Logger logger = Logger.getLogger(Client.class.getName());
     // Member variables for storing hash & salt
-    private ArrayList<HashedData> hashedDataArrayList;
     private ByteString hashedPassword;
     private ByteString salt;
 
@@ -33,8 +32,6 @@ public class Client {
                 .build();
         // Create a stub & blocking stub with the channel
         syncPasswordService = PasswordServiceGrpc.newBlockingStub(channel);
-        // Array List to store hashed data
-        hashedDataArrayList = new ArrayList<HashedData>();
     }// End Constructor
 
     // Shutdown Method

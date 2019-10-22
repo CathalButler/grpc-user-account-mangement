@@ -7,7 +7,6 @@ package ie.gmit.ds;
 import com.google.protobuf.ByteString;
 
 public class HashedData {
-
     // Member Variables
     // Array list to hold hashed password and the salt
     private ByteString hashedPassword;
