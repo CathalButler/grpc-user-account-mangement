@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /* Cathal Butler | G00346889 - Distributed Systems Project
- * Server Class
+ * Server Class. This class receives requests from the clients processes them and they responds.
  */
 
 public class Server {

@@ -18,7 +18,7 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
      * Method makes a call to the Passwords class method hash to hash a password with a salt generated from the Passwords
      * class and a password provided from the client.
      *
-     * @param request from client
+     * @param request          from client
      * @param responseObserver response to client
      */
     @Override
@@ -43,7 +43,8 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
      * Override method from PasswordServiceGrpc.PasswordServiceImplBase that handles a validate request from a client.
      * Method makes a call to the Passwords class method isExpectedPassword.
      * Returns true if the given password and salt match the hashed value, false otherwise.
-     * @param request from client
+     *
+     * @param request          from client
      * @param responseObserver response to client
      */
     @Override
@@ -61,4 +62,9 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
         // Complete response
         responseObserver.onCompleted();
     }// End method
+
+    // Method
+    private void testData(){
+
+    }
 }// End class

@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /* Cathal Butler | G00346889 - Distributed Systems Project
- * Client Class
+ * Client Class. This class will make request to the server which the server will respond to the request made.
  */
 
 public class Client {
@@ -43,6 +43,7 @@ public class Client {
 
     /**
      * Method that makes a hash request to the server with the params below
+     *
      * @param userId
      * @param password
      */
@@ -66,20 +67,21 @@ public class Client {
         }// End try catch
 
         //Logger for response
-        logger.info("\n\nServer Response:\nUser ID: " + response.getUserId() + "\nHashed Password: "
+        logger.info("Server Response:\n\nUser ID: " + response.getUserId() + "\nHashed Password: "
                 + response.getHashedPassword() + "\nSalt: " + response.getSalt());
     }// End method
 
     /**
      * Mehtod that makes a validate request to the server with the parameters below
+     *
      * @param password
      * @param hashedPassword
      * @param salt
      */
     public void validateRequest(String password, ByteString hashedPassword, ByteString salt) {
         // Logger
-        logger.info("\n\nClient: Making Validation request with details Password: " + password + "\nHashed Password: "
-                + hashedPassword + "\nSalt " + salt);
+        logger.info("Client: Making Validation request with details\n\nPassword: " + password + "\nHashed Password: "
+                + hashedPassword + "\nSalt " + salt + "\n\n");
         //Creating a request to the server
         ValidateRequest request = ValidateRequest.newBuilder().setPassword(password).setHashedPassword(hashedPassword)
                 .setSalt(salt)
@@ -95,8 +97,8 @@ public class Client {
             return;
         }// End try catch
         //Logger for response
-        logger.info("\n\nServer Response: Valid Password (Returns true if the given password and salt match the hashed " +
-                "value, false otherwise)\n:" + response.getValidity());
+        logger.info("Server Response: Valid Password (Returns true if the given password and salt match the hashed " +
+                "value, false otherwise)\nResponse: " + response.getValidity() + "\n\n");
     }// End validate request method
 
     public ByteString getHashedPassword() {
@@ -123,9 +125,11 @@ public class Client {
         try {
             //Send request created above:
             // Hardcoded test data
-            client.hashRequest(1234, "yurt the world");
+            client.hashRequest(1234, "Is your passwords safe?");
             //Run data through validate method
-            client.validateRequest("yurt the world", client.getHashedPassword(), client.getSalt());
+            client.validateRequest("Is your passwords safe?", client.getHashedPassword(), client.getSalt());
+            // Test run with a different password provided to validate but the same hash and salt from the first hash request
+            client.validateRequest("They might not be", client.getHashedPassword(), client.getSalt());
         } finally {
             // Don't stop process, keep alive to receive async response
             Thread.currentThread().join();
