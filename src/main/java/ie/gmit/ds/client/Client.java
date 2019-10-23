@@ -2,7 +2,6 @@ package ie.gmit.ds.client;
 
 import com.google.protobuf.ByteString;
 import ie.gmit.ds.*;
-import ie.gmit.ds.server.HashedData;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -50,8 +49,6 @@ public class Client {
     public void hashRequest(int userId, String password) {
         // Logger
         logger.info("\n\nClient: Making hashing request with details: User ID: " + userId + " password: " + password);
-        //Variables
-        HashedData hd = new HashedData();
         // Creating a request to the Server:
         UserHashRequest request = UserHashRequest.newBuilder().setUserId(userId).setPassword(password).build();
         // Instance of User Hash Response
