@@ -2,13 +2,18 @@ package ie.gmit.ds.server;
 
 import com.google.protobuf.ByteString;
 import ie.gmit.ds.*;
+import ie.gmit.ds.client.Client;
 import io.grpc.stub.StreamObserver;
+import java.util.logging.Logger;
 
 /* Cathal Butler | G00346889 - Distributed Systems Project
  * Password Service Class to handle password.proto Services
  */
 
 public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase {
+    // Variables
+    private static final Logger logger = Logger.getLogger(Client.class.getName());
+
     // Constructor
     public PasswordService() {
     }// End Constructor
@@ -23,6 +28,9 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
      */
     @Override
     public void hash(UserHashRequest request, StreamObserver<UserHashResponse> responseObserver) {
+        //Logger
+        logger.info("Client Hash Request:\nUser ID: " + request.getUserId() + "\nPassword: "
+                + request.getPassword() + "\n\n");
         //Variables
         int userId = request.getUserId();
         // Generate salt
@@ -33,6 +41,9 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
         UserHashResponse response = UserHashResponse.newBuilder().setUserId(userId)
                 .setHashedPassword(ByteString.copyFrom(hashedPassword))
                 .setSalt(ByteString.copyFrom(salt)).build();
+        //Logger for response
+        logger.info("Server Response:\n\nUser ID: " + response.getUserId() + "\nHashed Password: "
+                + response.getHashedPassword() + "\nSalt: " + response.getSalt());
         // Send response
         responseObserver.onNext(response);
         // Complete response
@@ -49,6 +60,9 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
      */
     @Override
     public void validate(ValidateRequest request, StreamObserver<ValidateResponse> responseObserver) {
+        //Logger
+        logger.info("Client Validate Request:\nPassword: " + request.getPassword() + "\nSalt: "
+                + request.getSalt() + "\nExpected Hash: " + request.getHashedPassword() + "\n\n");
         // Variables
         char[] password = request.getPassword().toCharArray();
         byte[] salt = request.getSalt().toByteArray();
@@ -57,14 +71,12 @@ public class PasswordService extends PasswordServiceGrpc.PasswordServiceImplBase
         boolean validity = Passwords.isExpectedPassword(password, salt, expectedHash);
         //Response
         ValidateResponse response = ValidateResponse.newBuilder().setValidity(validity).build();
+        //Logger for response
+        logger.info("Server Response: Valid Password (Returns true if the given password and salt match the hashed " +
+                "value, false otherwise)\nResponse: " + response.getValidity() + "\n\n");
         // Send response
         responseObserver.onNext(response);
         // Complete response
         responseObserver.onCompleted();
     }// End method
-
-    // Method
-    private void testData(){
-
-    }
 }// End class

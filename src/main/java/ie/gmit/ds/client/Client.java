@@ -5,7 +5,6 @@ import ie.gmit.ds.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -131,8 +130,7 @@ public class Client {
             // Test run with a different password provided to validate but the same hash and salt from the first hash request
             client.validateRequest("They might not be", client.getHashedPassword(), client.getSalt());
         } finally {
-            // Don't stop process, keep alive to receive async response
-            Thread.currentThread().join();
+            client.shutdown();
         }//End try catch
     }// End main method
 }// Class
