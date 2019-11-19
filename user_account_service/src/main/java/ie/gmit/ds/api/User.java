@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-public class UserAccount {
+public class User {
     @NotNull
     private int userId;
     @NotBlank
@@ -18,10 +18,10 @@ public class UserAccount {
     @NotNull
     private String password;
 
-    public UserAccount() {
+    public User() {
     }
 
-    public UserAccount(int userId, String userName, String email, String password) {
+    public User(int userId, String userName, String email, String password) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;

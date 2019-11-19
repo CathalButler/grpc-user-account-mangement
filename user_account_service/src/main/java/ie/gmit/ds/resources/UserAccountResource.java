@@ -1,6 +1,6 @@
 package ie.gmit.ds.resources;
 
-import ie.gmit.ds.api.UserAccount;
+import ie.gmit.ds.api.User;
 import ie.gmit.ds.db.UserAccountDB;
 
 import javax.validation.ConstraintViolation;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 
-@Path("/login")
+@Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserAccountResource {
     //Member Variable
@@ -43,37 +43,36 @@ public class UserAccountResource {
      */
     @GET
     @Path("/{userId}")
-    public Response getUserAccountById(@PathParam("userId") Integer id) {
-        UserAccount userAccount = UserAccountDB.getUserAccountById(id);
-        if (userAccount != null)
-            return Response.ok(userAccount).build();
+    public Response getUserAccountById(@PathParam("userId") int id) {
+        User user = UserAccountDB.getUserAccountById(id);
+        if (user != null)
+            return Response.ok(user).build();
         else
             return Response.status(Response.Status.NOT_FOUND).build();
     }//End get user by id method
 
     /**
-     * @param userAccount
+     * @param user
      * @return response status to client
      * @throws URISyntaxException
      */
     @POST
-    @Path("/add")
-    public Response createUserAccount(UserAccount userAccount) throws URISyntaxException {
+    public Response createUserAccount(User user) throws URISyntaxException {
         // Validation
-        Set<ConstraintViolation<UserAccount>> violations = validator.validate(userAccount);
-        UserAccount ua = UserAccountDB.getUserAccountById(userAccount.getUserId());
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        User ua = UserAccountDB.getUserAccountById(user.getUserId());
         if (violations.size() > 0) {
             ArrayList<String> validationMessages = new ArrayList<String>();
-            for (ConstraintViolation<UserAccount> violation : violations) {
+            for (ConstraintViolation<User> violation : violations) {
                 validationMessages.add(violation.getPropertyPath().toString() + ": " + violation.getMessage());
             }//End for loop
             //Return status response to client
             return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
         }// end if
         if (ua == null) {
-            UserAccountDB.addUserAccount(userAccount.getUserId(), userAccount);
+            UserAccountDB.addUserAccount(user.getUserId(), user);
             //Return ok response to client
-            return Response.created(new URI("/login/" + userAccount.getUserId()))
+            return Response.created(new URI("/login/" + user.getUserId()))
                     .build();
         } else
             //Return status problem to user
@@ -82,18 +81,19 @@ public class UserAccountResource {
 
     /**
      * @param id
-     * @param userAccount
+     * @param user
      * @return response status to client
      */
     @PUT
     @Path("/{userId}")
-    public Response updateUserAccountById(@PathParam("userId") Integer id, UserAccount userAccount) {
+    public Response updateUserAccountById(@PathParam("userId") int id, User user) {
         // Validation
-        Set<ConstraintViolation<UserAccount>> violations = validator.validate(userAccount);
-        UserAccount ua = UserAccountDB.getUserAccountById(userAccount.getUserId());
+        System.out.println(user.toString());
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        User ua = UserAccountDB.getUserAccountById(user.getUserId());
         if (violations.size() > 0) {
             ArrayList<String> validationMessages = new ArrayList<String>();
-            for (ConstraintViolation<UserAccount> violation : violations) {
+            for (ConstraintViolation<User> violation : violations) {
                 validationMessages.add(violation.getPropertyPath().toString() + ": " + violation.getMessage());
             }//End for loop
             //Return status response to client
@@ -101,9 +101,10 @@ public class UserAccountResource {
         }// end if
         // If user account is not = to null do update
         if (ua != null) {
-            UserAccountDB.updateUserAccount(userAccount.getUserId(), userAccount);
+            System.out.println("GOT INSIDE METHOD");
+            UserAccountDB.updateUserAccount(user.getUserId(), user);
             //Return ok response to client
-            return Response.ok(userAccount).build();
+            return Response.ok(user).build();
         } else
             //Return status problem to user
             return Response.status(Response.Status.NOT_FOUND).build();

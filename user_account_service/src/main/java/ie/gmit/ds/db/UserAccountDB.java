@@ -1,6 +1,6 @@
 package ie.gmit.ds.db;
 
-import ie.gmit.ds.api.UserAccount;
+import ie.gmit.ds.api.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,41 +13,44 @@ import java.util.List;
 public class UserAccountDB {
     //Member Variables
     // HashMap to store all User accounts as a database is not being used
-    private static HashMap<Integer, UserAccount> userAccountMap = new HashMap<>();
+    private static HashMap<Integer, User> userAccountMap = new HashMap<>();
 
     static {
-        userAccountMap.put(1, new UserAccount(100, "Butblob", "cb@outook.com", "mup"));
-        userAccountMap.put(2, new UserAccount(200, "Morganic", "mr@outook.com", "naaaa"));
+        User user = new User(100, "Butblob", "cb@outook.com", "mup");
+        userAccountMap.put(user.getUserId(), user);
+        User user1 = new User(200, "Morganic", "mr@outook.com", "naaaa");
+        userAccountMap.put(user1.getUserId(), user1);
     }
 
     /**
      * @return new array list with map values
      */
-    public static List<UserAccount> getUserAccounts() {
-        return new ArrayList<UserAccount>(userAccountMap.values());
+    public static List<User> getUserAccounts() {
+        System.out.println(userAccountMap.toString());
+        return new ArrayList<User>(userAccountMap.values());
     }
 
     /**
      * @param id
      * @return account by its id
      */
-    public static UserAccount getUserAccountById(Integer id) {
+    public static User getUserAccountById(Integer id) {
         return userAccountMap.get(id);
     }
 
     /**
      * @param id
-     * @param userAccount
+     * @param user
      */
-    public static void updateUserAccount(Integer id, UserAccount userAccount) {
-        userAccountMap.put(id, userAccount);
+    public static void updateUserAccount(Integer id, User user) {
+        userAccountMap.put(id, user);
     }
 
     /**
-     * @param userAccount
+     * @param user
      */
-    public static void addUserAccount(Integer id, UserAccount userAccount) {
-        userAccountMap.put(id, userAccount);
+    public static void addUserAccount(Integer id, User user) {
+        userAccountMap.put(id, user);
     }
 
     /**
