@@ -26,7 +26,6 @@ public class UserAccountDB {
      * @return new array list with map values
      */
     public static List<User> getUserAccounts() {
-        System.out.println(userAccountMap.toString());
         return new ArrayList<User>(userAccountMap.values());
     }
 
@@ -39,14 +38,6 @@ public class UserAccountDB {
     }
 
     /**
-     * @param id
-     * @param user
-     */
-    public static void updateUserAccount(Integer id, User user) {
-        userAccountMap.put(id, user);
-    }
-
-    /**
      * @param user
      */
     public static void addUserAccount(Integer id, User user) {
@@ -56,7 +47,7 @@ public class UserAccountDB {
     /**
      * @param id
      */
-    public static void removeUserAccounts(Integer id) {
+    public static void removeUserAccount(Integer id) {
         userAccountMap.remove(id);
     }
 }// End class

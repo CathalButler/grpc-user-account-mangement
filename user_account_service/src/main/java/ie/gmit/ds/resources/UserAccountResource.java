@@ -90,23 +90,44 @@ public class UserAccountResource {
         // Validation
         System.out.println(user.toString());
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        User ua = UserAccountDB.getUserAccountById(user.getUserId());
+        User ua = UserAccountDB.getUserAccountById(id);
         if (violations.size() > 0) {
             ArrayList<String> validationMessages = new ArrayList<String>();
             for (ConstraintViolation<User> violation : violations) {
                 validationMessages.add(violation.getPropertyPath().toString() + ": " + violation.getMessage());
             }//End for loop
+            System.out.println(validationMessages);
             //Return status response to client
             return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
         }// end if
-        // If user account is not = to null do update
+        // If user account is not = to null process result
         if (ua != null) {
-            System.out.println("GOT INSIDE METHOD");
-            UserAccountDB.updateUserAccount(user.getUserId(), user);
+            // Due to design choice the primary key is being set as the the User ID so a replace cannot be done
+            // on an existing entry in the map. To over come this problem the original account will be remove and then
+            // the new account will be added to the map. a.k.a the UserAccountsDB
+            UserAccountDB.removeUserAccount(id);
+            //Add new updated entry details to the db:
+            UserAccountDB.addUserAccount(user.getUserId(), user);
             //Return ok response to client
             return Response.ok(user).build();
         } else
             //Return status problem to user
             return Response.status(Response.Status.NOT_FOUND).build();
     }// End updateUserAccountById method
+
+    /**
+     * @param id
+     * @return
+     */
+    @DELETE
+    @Path("/{userId}")
+    public Response removeUserById(@PathParam("userId") int id) {
+        User user = UserAccountDB.getUserAccountById(id);
+        if (user != null) {
+            UserAccountDB.removeUserAccount(id);
+            return Response.ok().build();
+        } else
+            return Response.status(Response.Status.NOT_FOUND).build();
+    }//End removeUserAccount method
+
 }// End class
