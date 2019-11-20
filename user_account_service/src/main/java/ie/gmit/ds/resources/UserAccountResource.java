@@ -1,6 +1,8 @@
 package ie.gmit.ds.resources;
 
+import ie.gmit.ds.api.Responder;
 import ie.gmit.ds.api.User;
+import ie.gmit.ds.api.UserLogin;
 import ie.gmit.ds.client.Client;
 import ie.gmit.ds.db.UserAccountDB;
 import io.grpc.StatusRuntimeException;
@@ -39,7 +41,8 @@ public class UserAccountResource {
     }
 
     /**
-     * Method to get a user account by id
+     * Method that handles a GET request made to the endpoint '/users' with an id. A user if exists in the database
+     * will be returned.
      *
      * @param id
      * @return response status to client
@@ -55,6 +58,11 @@ public class UserAccountResource {
     }//End get user by id method
 
     /**
+     * Method that handles POST requests made to the endpoint '/users'. A new user will be added to the database with
+     * the information passed in the request. The users password is not stored in the database but is sent to the
+     * password server which will return a salt and hash for that password which will then also be saved with personal
+     * details.
+     *
      * @param user
      * @return response status to client
      * @throws URISyntaxException
@@ -91,6 +99,9 @@ public class UserAccountResource {
     }// End createUserAccount method
 
     /**
+     * Method that handles PUT requests made to the endpoint '/users/' with an id. The user account matching the user id
+     * will be updated in the database with the data passed in the request.
+     *
      * @param id
      * @param user
      * @return response status to client
@@ -107,7 +118,6 @@ public class UserAccountResource {
             for (ConstraintViolation<User> violation : violations) {
                 validationMessages.add(violation.getPropertyPath().toString() + ": " + violation.getMessage());
             }//End for loop
-            System.out.println(validationMessages);
             //Return status response to client
             return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
         }// end if
@@ -128,8 +138,11 @@ public class UserAccountResource {
     }// End updateUserAccountById method
 
     /**
+     * Method that handles DELETE requests made to the endpoint '/users/' with an id. The User account matching the user id
+     * will be removed from the database.
+     *
      * @param id
-     * @return
+     * @return Response status to client
      */
     @DELETE
     @Path("/{userId}")
@@ -142,4 +155,38 @@ public class UserAccountResource {
             return Response.status(Response.Status.NOT_FOUND).build();
     }//End removeUserAccount method
 
+
+    /**
+     * Method that handles POST login requests made to the endpoint '/users/login'. Passwords passed in the body are validated
+     * agents there salt and hashed password to see if it is correct.
+     *
+     * @param userLogin
+     * @return Response status to client
+     */
+    @POST
+    @Path("/login")
+    public Response login(UserLogin userLogin) {
+        Set<ConstraintViolation<UserLogin>> violations = validator.validate(userLogin);
+        User ua = UserAccountDB.getUserAccountById(userLogin.getUserId());
+        if (violations.size() > 0) {
+            ArrayList<String> validationMessages = new ArrayList<String>();
+            for (ConstraintViolation<UserLogin> violation : violations) {
+                validationMessages.add(violation.getPropertyPath().toString() + ": " + violation.getMessage());
+            }//End for loop
+            //Return status response to client
+            return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
+        }// end if
+
+        if (ua != null) {
+            Client client = new Client("localhost", 50551);
+
+            //Make a request to validate info
+            if (client.validateRequest(userLogin.getPassword(), ua.getHashedPassword(), ua.getSalt())) {
+                return Response.status(Response.Status.OK).entity(new Responder("Login Stressful")).build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).entity(new Responder("Login details incorrect")).build();
+            }
+        } else
+            return Response.status(Response.Status.NOT_FOUND).build();
+    }//End removeUserAccount method
 }// End class

@@ -10,7 +10,7 @@
 
     <properties>
         <dropwizard.version>1.3.16</dropwizard.version>
-        <!-- Setting encoding. Removes compiler error -->
+        <!-- Setting encoding. Removes compiler1 error -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>

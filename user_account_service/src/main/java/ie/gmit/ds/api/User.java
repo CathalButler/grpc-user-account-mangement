@@ -2,7 +2,6 @@ package ie.gmit.ds.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.protobuf.ByteString;
-import ie.gmit.ds.UserHashResponse;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -24,14 +23,6 @@ public class User {
     private ByteString hashedPassword;
 
     public User() {
-    }
-
-    //Constructor
-    public User(int userId, String userName, String email, String password) {
-        this.userId = userId;
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
     }
 
     public User(int userId, String userName, String email, ByteString salt, ByteString hashedPassword) {

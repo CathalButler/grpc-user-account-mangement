@@ -24,9 +24,6 @@ public class Client {
     private final PasswordServiceGrpc.PasswordServiceBlockingStub blockingStub;
     private final PasswordServiceGrpc.PasswordServiceStub asyncStub;
     private static final Logger logger = Logger.getLogger(Client.class.getName());
-    // Member variables for storing hash & salt
-    private ByteString hashedPassword;
-    private ByteString salt;
 
     // Constructor
     public Client(String host, int port) {
@@ -56,8 +53,6 @@ public class Client {
      * @param newUser
      */
     public void hashRequest(User newUser) {
-        // Logger
-        logger.info("\n\nClient: Making hashing request with details: User ID: " + newUser.getUserName() + " password: " + newUser.getPassword());
         // Creating a request to the Server:
         UserHashRequest request = UserHashRequest.newBuilder().setUserId(newUser.getUserId()).setPassword(newUser.getPassword()).build();
         // Make a request to the server hash method
@@ -96,10 +91,7 @@ public class Client {
      * @param hashedPassword
      * @param salt
      */
-    public void validateRequest(String password, ByteString hashedPassword, ByteString salt) {
-        // Logger
-        logger.info("Client: Making Validation request with details\n\nPassword: " + password + "\nHashed Password: "
-                + hashedPassword + "\nSalt " + salt + "\n\n");
+    public boolean validateRequest(String password, ByteString hashedPassword, ByteString salt) {
         //Creating a request to the server
         ValidateRequest request = ValidateRequest.newBuilder().setPassword(password).setHashedPassword(hashedPassword)
                 .setSalt(salt)
@@ -112,10 +104,8 @@ public class Client {
         } catch (StatusRuntimeException ex) {
             // Log exception if any
             logger.log(Level.WARNING, "RPC failed: {0}", ex.getStatus());
-            return;
+            return false;
         }// End try catch
-        //Logger for response
-        logger.info("Server Response: Valid Password (Returns true if the given password and salt match the hashed " +
-                "value, false otherwise)\nResponse: " + response.getValidity() + "\n\n");
+        return true;
     }// End validate request method
 }// Class
