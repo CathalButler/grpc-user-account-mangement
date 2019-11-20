@@ -1,7 +1,9 @@
 package ie.gmit.ds.resources;
 
 import ie.gmit.ds.api.User;
+import ie.gmit.ds.client.Client;
 import ie.gmit.ds.db.UserAccountDB;
+import io.grpc.StatusRuntimeException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -23,10 +25,11 @@ public class UserAccountResource {
     //Constructor
     public UserAccountResource(Validator validator) {
         this.validator = validator;
+        //Create connection to server
     }// End Constructor
 
     /**
-     * Method to get all user accounts in the database
+     * Method to get all user accounts in the databases
      *
      * @return response status to client
      */
@@ -70,10 +73,18 @@ public class UserAccountResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
         }// end if
         if (ua == null) {
-            UserAccountDB.addUserAccount(user.getUserId(), user);
-            //Return ok response to client
-            return Response.created(new URI("/login/" + user.getUserId()))
-                    .build();
+            //Password hashing
+            Client client = new Client("localhost", 50551);
+
+            try {
+                client.hashRequest(user);
+                return Response.created(new URI("/login/" + user.getUserId()))
+                        .build();
+
+            } catch (StatusRuntimeException ex) {
+                //Return bas request with runtime exception
+                return Response.status(Response.Status.BAD_REQUEST).entity(ex).build();
+            }//End try catch
         } else
             //Return status problem to user
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -107,7 +118,8 @@ public class UserAccountResource {
             // the new account will be added to the map. a.k.a the UserAccountsDB
             UserAccountDB.removeUserAccount(id);
             //Add new updated entry details to the db:
-            UserAccountDB.addUserAccount(user.getUserId(), user);
+            Client client = new Client("localhost", 50551);
+            client.hashRequest(user);
             //Return ok response to client
             return Response.ok(user).build();
         } else

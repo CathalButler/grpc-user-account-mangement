@@ -15,10 +15,13 @@ public class UserAccountDB {
     // HashMap to store all User accounts as a database is not being used
     private static HashMap<Integer, User> userAccountMap = new HashMap<>();
 
+    public UserAccountDB() {
+    }
+
     static {
-        User user = new User(100, "Butblob", "cb@outook.com", "mup");
+        User user = new User(100, "Butblob", "cb@outook.com");
         userAccountMap.put(user.getUserId(), user);
-        User user1 = new User(200, "Morganic", "mr@outook.com", "naaaa");
+        User user1 = new User(200, "Morganic", "mr@outook.com");
         userAccountMap.put(user1.getUserId(), user1);
     }
 

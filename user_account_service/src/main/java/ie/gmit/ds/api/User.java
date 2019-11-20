@@ -1,6 +1,8 @@
 package ie.gmit.ds.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.protobuf.ByteString;
+import ie.gmit.ds.UserHashResponse;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -18,14 +20,32 @@ public class User {
     @NotNull
     private String password;
 
+    private ByteString salt;
+    private ByteString hashedPassword;
+
     public User() {
     }
 
+    //Constructor
     public User(int userId, String userName, String email, String password) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
         this.password = password;
+    }
+
+    public User(int userId, String userName, String email, ByteString salt, ByteString hashedPassword) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.salt = salt;
+        this.hashedPassword = hashedPassword;
+    }
+
+    public User(int userId, String userName, String email) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
     }
 
     @JsonProperty
@@ -48,13 +68,24 @@ public class User {
         return password;
     }
 
+    @JsonProperty
+    public ByteString getSalt() {
+        return salt;
+    }
+
+    @JsonProperty
+    public ByteString getHashedPassword() {
+        return hashedPassword;
+    }
+
     @Override
     public String toString() {
-        return "UserAccount{" +
+        return "User{" +
                 "userId=" + userId +
                 ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", salt='" + salt + '\'' +
                 '}';
-    }//End toString method
+    }
 }//End class
