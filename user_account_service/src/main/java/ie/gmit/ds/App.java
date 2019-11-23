@@ -4,6 +4,7 @@ import ie.gmit.ds.health.UserAccountHealthCheck;
 import ie.gmit.ds.resources.UserAccountResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
+import io.grpc.ManagedChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,18 +17,20 @@ public class App extends Application<UserAccountConfig> {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
     final UserAccountHealthCheck healthCheck = new UserAccountHealthCheck();
 
-
     /**
      * @param configuration
      * @param environment
-     * @throws Exception
      */
     @Override
-    public void run(final UserAccountConfig configuration, final Environment environment) throws Exception {
+    public void run(final UserAccountConfig configuration, final Environment environment) {
         LOGGER.info("Registering REST resources");
-        environment.jersey().register(new UserAccountResource(environment.getValidator()));
         //Register health check class
         environment.healthChecks().register("UserAccount Health Check", healthCheck);
+        //Register gRPC external service
+        final ManagedChannel externalServiceChannel;
+        externalServiceChannel = configuration.getExternalGrpcChannelFactory().build(environment);
+        //Registering two services to class UserAccountResource. Validation and gRPC External Password Service
+        environment.jersey().register(new UserAccountResource(environment.getValidator(), externalServiceChannel));
     }//End override run method
 
     /**

@@ -7,6 +7,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/* Cathal Butler | G00346889
+ * Class that handles login Objects with constraints set on member variables.
+ * POJO
+ * https://www.mkyong.com/java/jackson-how-to-ignore-null-fields/
+ */
+
 @XmlRootElement(name = "userlogin")
 //Every non static, non transient field in a JAXB-bound class will be automatically bound to XML, unless annotated by XmlTransient.
 @XmlAccessorType(XmlAccessType.FIELD)

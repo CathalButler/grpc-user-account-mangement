@@ -1,8 +1,8 @@
 package ie.gmit.ds.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.protobuf.ByteString;
-import ie.gmit.ds.client.Client;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -13,9 +13,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Base64;
 
+/* Cathal Butler | G00346889
+ * Class that handles User Objects with constraints set on member variables.
+ * POJO
+ */
+
 @XmlRootElement(name = "user") //Used to generate xml
 //Every non static, non transient field in a JAXB-bound class will be automatically bound to XML, unless annotated by XmlTransient.
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     @NotNull
     private int userId;
@@ -34,6 +40,7 @@ public class User {
     }
 
     //Constructor with salt and hashed password as a ByteString
+
     public User(int userId, String userName, String email, ByteString salt, ByteString hashedPassword) {
         this.userId = userId;
         this.userName = userName;
@@ -47,7 +54,6 @@ public class User {
         this.userName = userName;
         this.email = email;
     }
-
 
     @JsonProperty
     public int getUserId() {

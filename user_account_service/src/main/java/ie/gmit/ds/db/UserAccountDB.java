@@ -10,7 +10,6 @@ import java.util.HashMap;
  * Class that handles storing user accounts in a HashMap
  */
 
-
 public class UserAccountDB {
     //Member Variables
     // HashMap to store all User accounts as a database is not being used
@@ -31,7 +30,8 @@ public class UserAccountDB {
      */
     public static GenericEntity<ArrayList<User>> getUserAccounts() {
         ArrayList<User> userDb = new ArrayList<User>(userAccountMap.values());
-        return new GenericEntity<ArrayList<User>>(userDb){};
+        return new GenericEntity<ArrayList<User>>(userDb) {
+        };
     }
 
     /**

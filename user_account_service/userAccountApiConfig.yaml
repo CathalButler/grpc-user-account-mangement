@@ -2,3 +2,6 @@ server:
   applicationConnectors:
     - type: http
       port: 9000
+externalService:
+  hostname: localhost
+  port: 50551
