@@ -10,6 +10,7 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,9 +63,13 @@ public class Client {
             public void onNext(UserHashResponse userHashResponse) {
                 //Log incoming request
                 logger.info("Received request items: " + userHashResponse);
+
+
                 //Creating a new User object with the now hashed password and salt
                 User user = new User(newUser.getUserId(), newUser.getUserName(), newUser.getEmail(),
                         userHashResponse.getSalt(), userHashResponse.getHashedPassword());
+
+                logger.info("\n==================================\n" + user.toString() + "\n====================================\nUser after created with toStringUtf8:");
                 //Added the new user account to the database
                 UserAccountDB.addUserAccount(user.getUserId(), user);
             }
@@ -91,21 +96,26 @@ public class Client {
      * @param hashedPassword
      * @param salt
      */
-    public boolean validateRequest(String password, ByteString hashedPassword, ByteString salt) {
+    public boolean validateRequest(String password, String hashedPassword, String salt) {
         //Creating a request to the server
-        ValidateRequest request = ValidateRequest.newBuilder().setPassword(password).setHashedPassword(hashedPassword)
-                .setSalt(salt)
+        ValidateRequest request = ValidateRequest.newBuilder()
+                .setPassword(password)
+                .setHashedPassword(ByteString.copyFrom(Base64.getDecoder().decode(hashedPassword)))
+                .setSalt(ByteString.copyFrom(Base64.getDecoder().decode(salt)))
                 .build();
         // Instance of Validate response
         ValidateResponse response;
         try {
+
             // Create the response to the
             response = blockingStub.validate(request);
+            System.out.println(response.getValidity());
+            return response.getValidity();
+
         } catch (StatusRuntimeException ex) {
             // Log exception if any
             logger.log(Level.WARNING, "RPC failed: {0}", ex.getStatus());
             return false;
         }// End try catch
-        return true;
     }// End validate request method
 }// Class

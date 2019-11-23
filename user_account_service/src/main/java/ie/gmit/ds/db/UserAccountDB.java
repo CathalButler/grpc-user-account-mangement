@@ -2,13 +2,14 @@ package ie.gmit.ds.db;
 
 import ie.gmit.ds.api.User;
 
+import javax.ws.rs.core.GenericEntity;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /* Cathal Butler | G00346889
  * Class that handles storing user accounts in a HashMap
  */
+
 
 public class UserAccountDB {
     //Member Variables
@@ -28,8 +29,9 @@ public class UserAccountDB {
     /**
      * @return new array list with map values
      */
-    public static List<User> getUserAccounts() {
-        return new ArrayList<User>(userAccountMap.values());
+    public static GenericEntity<ArrayList<User>> getUserAccounts() {
+        ArrayList<User> userDb = new ArrayList<User>(userAccountMap.values());
+        return new GenericEntity<ArrayList<User>>(userDb){};
     }
 
     /**

@@ -3,7 +3,13 @@ package ie.gmit.ds.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "userlogin")
+//Every non static, non transient field in a JAXB-bound class will be automatically bound to XML, unless annotated by XmlTransient.
+@XmlAccessorType(XmlAccessType.FIELD)
 public class UserLogin {
     @NotNull
     private int userId;
