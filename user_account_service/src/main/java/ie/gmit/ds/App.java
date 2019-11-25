@@ -31,6 +31,8 @@ public class App extends Application<UserAccountConfig> {
         externalServiceChannel = configuration.getExternalGrpcChannelFactory().build(environment);
         //Registering two services to class UserAccountResource. Validation and gRPC External Password Service
         environment.jersey().register(new UserAccountResource(environment.getValidator(), externalServiceChannel));
+        LOGGER.info("gPRC Password Service registered: " + externalServiceChannel.getState(true) +
+                "\n" + externalServiceChannel.toString());
     }//End override run method
 
     /**

@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-@Path("/users")
+@Path("/")
 public class UserAccountResource {
     //Member Variable
     private final Validator validator;
@@ -44,20 +44,21 @@ public class UserAccountResource {
      * @return response status to client`
      */
     @GET
+    @Path("users")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getUserAccounts() {
         return Response.ok(UserAccountDB.getUserAccounts()).build();
     }
 
     /**
-     * Method that handles a GET request made to the endpoint '/users' with an id. A user if exists in the database
+     * Method that handles a GET request made to the endpoint '/users/{userId}' with an id. A user if exists in the database
      * will be returned.
      *
      * @param id
      * @return response status to client
      */
     @GET
-    @Path("/{userId}")
+    @Path("/users/{userId}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getUserAccountById(@PathParam("userId") int id) {
         User user = UserAccountDB.getUserAccountById(id);
@@ -77,6 +78,7 @@ public class UserAccountResource {
      * @return response status to client
      */
     @POST
+    @Path("users")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response createUserAccount(User user) {
         // Validation
@@ -93,7 +95,11 @@ public class UserAccountResource {
         }// end if
         if (ua == null) {
             //Hash users password and the account will be added to the database after.
-            hash(user);
+            try {
+                hash(user);
+            } catch (StatusRuntimeException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
             return Response.status(Response.Status.CREATED).entity("User account has been created").build();
         } else
             //Return status problem to user
@@ -101,7 +107,7 @@ public class UserAccountResource {
     }// End createUserAccount method
 
     /**
-     * Method that handles PUT requests made to the endpoint '/users/' with an id. The user account matching the user id
+     * Method that handles PUT requests made to the endpoint '/users/{userId}' with an id. The user account matching the user id
      * will be updated in the database with the data passed in the request.
      *
      * @param id
@@ -109,7 +115,7 @@ public class UserAccountResource {
      * @return response status to client
      */
     @PUT
-    @Path("/{userId}")
+    @Path("/users/{userId}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response updateUserAccountById(@PathParam("userId") int id, User user) {
         // Validation
@@ -137,7 +143,7 @@ public class UserAccountResource {
                 return Response.ok(user).entity("User account has been updated").build();
             } catch (StatusRuntimeException ex) {
                 //Return bas request with runtime exception
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }//End try catch
         } else
             //Return status problem to user
@@ -145,14 +151,14 @@ public class UserAccountResource {
     }// End updateUserAccountById method
 
     /**
-     * Method that handles DELETE requests made to the endpoint '/users/' with an id. The User account matching the user id
+     * Method that handles DELETE requests made to the endpoint '/users/{userId}' with an id. The User account matching the user id
      * will be removed from the database.
      *
      * @param id
      * @return Response status to client
      */
     @DELETE
-    @Path("/{userId}")
+    @Path("/users/{userId}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response removeUserById(@PathParam("userId") int id) {
         User user = UserAccountDB.getUserAccountById(id);
@@ -166,7 +172,7 @@ public class UserAccountResource {
 
 
     /**
-     * Method that handles POST login requests made to the endpoint '/users/login'. Passwords passed in the body are validated
+     * Method that handles POST login requests made to the endpoint '/login'. Passwords passed in the body are validated
      * agents there salt and hashed password to see if it is correct.
      *
      * @param userLogin
@@ -206,7 +212,7 @@ public class UserAccountResource {
         UserHashRequest request = UserHashRequest.newBuilder().setUserId(user.getUserId())
                 .setPassword(user.getPassword()).build();
         // Make a request to the server hash method
-        asyncStub.hash(request, new StreamObserver<>() {
+        asyncStub.hash(request, new StreamObserver<UserHashResponse>() {
             @Override
             public void onNext(UserHashResponse userHashResponse) {
                 //Log incoming request
@@ -259,7 +265,7 @@ public class UserAccountResource {
         } catch (StatusRuntimeException ex) {
             // Log exception if any
             logger.log(Level.WARNING, "RPC failed: {0}", ex.getStatus());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }// End try catch
     }// End validate request method
 }// End class

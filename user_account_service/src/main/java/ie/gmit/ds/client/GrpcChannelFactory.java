@@ -17,7 +17,7 @@ public class GrpcChannelFactory {
 
     @Min(1)
     @Max(65535)
-    private int port = -1;
+    private int port;
 
     /**
      * @return ManagedChannelBuilder with hostname and port set from config file

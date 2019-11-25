@@ -6,6 +6,7 @@ import com.google.protobuf.ByteString;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,6 +17,7 @@ import java.util.Base64;
 /* Cathal Butler | G00346889
  * Class that handles User Objects with constraints set on member variables.
  * POJO
+ * https://www.mkyong.com/java/jackson-how-to-ignore-null-fields/
  */
 
 @XmlRootElement(name = "user") //Used to generate xml
@@ -24,6 +26,7 @@ import java.util.Base64;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     @NotNull
+    @Min(1)
     private int userId;
     @NotBlank
     @Length(min = 2, max = 255)
@@ -33,6 +36,7 @@ public class User {
     @NotNull
     @Length(min = 6, max = 255)
     private String password;
+
     private String salt;
     private String hashedPassword;
 
