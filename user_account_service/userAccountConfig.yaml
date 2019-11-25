@@ -4,6 +4,7 @@ server:
   applicationConnectors:
     - type: http
       port: 9000
+      bindHost: localhost
 # gPRC Password Service
 externalService:
   hostname: localhost
