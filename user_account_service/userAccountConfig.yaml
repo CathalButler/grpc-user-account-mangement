@@ -1,0 +1,10 @@
+# Configure to your needs wherever you deploy the User Service & Password Service
+# User account service config. DEFAULT hostname 'localhost'
+server:
+  applicationConnectors:
+    - type: http
+      port: 9000
+# gPRC Password Service
+externalService:
+  hostname: localhost
+  port: 50551
