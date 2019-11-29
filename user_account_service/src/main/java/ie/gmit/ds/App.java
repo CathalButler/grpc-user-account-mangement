@@ -1,5 +1,6 @@
 package ie.gmit.ds;
 
+import ie.gmit.ds.health.GrpcPasswordServiceHealthCheck;
 import ie.gmit.ds.health.UserAccountHealthCheck;
 import ie.gmit.ds.resources.UserAccountResource;
 import io.dropwizard.Application;
@@ -9,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /* Cathal Butler | G00346889
- *
+ * Class that handles registering services into the application
  */
 
 public class App extends Application<UserAccountConfig> {
@@ -31,8 +32,8 @@ public class App extends Application<UserAccountConfig> {
         externalServiceChannel = configuration.getExternalGrpcChannelFactory().build(environment);
         //Registering two services to class UserAccountResource. Validation and gRPC External Password Service
         environment.jersey().register(new UserAccountResource(environment.getValidator(), externalServiceChannel));
-        LOGGER.info("gPRC Password Service registered: " + externalServiceChannel.getState(true) +
-                "\n" + externalServiceChannel.toString());
+        //Registering gRPC Password Service Health Check
+        environment.healthChecks().register("gRPC Password Service", new GrpcPasswordServiceHealthCheck(externalServiceChannel));
     }//End override run method
 
     /**

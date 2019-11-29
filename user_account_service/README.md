@@ -8,7 +8,10 @@ This is part 2 of a final year project where part one in this repo was developed
 hashing requests of passwords be done when a user either creates or updates an account in the database. An endpoint /login
 allows users who`s account details are in the database validate there user ID and password. When a request is made 
 the application will check to see if the user ID exists in the database, if so it will then check with the password service
-to see if the password matches the salt and hash stored with the users details. 
+to see if the password matches the salt and hash stored with the users details.
+
+Admin access that gives information on the applications health and metres can be accesses through a web browser @ `localhost:8081`
+    - Healthcheck will report the connection status to the gRPC Password Service
 
 ### [API Design](https://app.swaggerhub.com/apis/butlawr/UserAccountAPI/1.0)
 
@@ -21,3 +24,10 @@ User Service and connection to the Password Service. Please download [applicatio
 Once the jar has been downloaded run `java -jar user-account-service.jar server userAccountConfig.yaml`
 
 The program will log requests made from the clients and any server information.
+
+### References
+ - https://www.dropwizard.io/en/stable/manual/core.html
+ - https://dennis-xlc.gitbooks.io/restful-java-with-jax-rs-2-0-2rd-edition/content/en/index.html
+ - https://dennis-xlc.gitbooks.io/restful-java-with-jax-rs-2-0-2rd-edition/en/part1/chapter7/complex_responses.html
+ - https://www.mkyong.com/java/jackson-how-to-ignore-null-fields/
+ - https://howtodoinjava.com/dropwizard/tutorial-and-hello-world-example/

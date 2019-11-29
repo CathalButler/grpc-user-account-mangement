@@ -7,6 +7,12 @@ import io.dropwizard.Configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+/* Cathal Butler | G00346889
+ * Class that handles getting configuration options set in the UserAccountConfig.yaml file.
+ * 'externalService' is the hostname & port for the gRPC Password service.
+ * This ties in with teh GrpcChannelFactory class
+ */
+
 public class UserAccountConfig extends Configuration {
 
     @Valid

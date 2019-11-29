@@ -9,6 +9,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+/* Cathal Butler | G00346889
+ * Class that handles getting getting and setting the the property set in the userAccountConfig.yaml file.
+ * A channel will be build with these fields and added to the applications lifecycle then returning it.
+ */
+
 public class GrpcChannelFactory {
 
     //Member variables

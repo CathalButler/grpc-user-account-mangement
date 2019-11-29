@@ -21,6 +21,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static io.grpc.ConnectivityState.TRANSIENT_FAILURE;
+
+
+/* Cathal Butler | G00346889
+ * Class that handles all end points processing made to the application.
+ * Comments are added to each endpoint to example what it does.
+ */
+
 
 @Path("/")
 public class UserAccountResource {
@@ -29,13 +37,14 @@ public class UserAccountResource {
     private final PasswordServiceGrpc.PasswordServiceBlockingStub blockingStub;
     private final PasswordServiceGrpc.PasswordServiceStub asyncStub;
     private static final Logger logger = Logger.getLogger(UserAccountResource.class.getName());
+    private final ManagedChannel externalServiceChannel;
 
     //Constructor
     public UserAccountResource(Validator validator, ManagedChannel externalServiceChannel) {
+        this.externalServiceChannel = externalServiceChannel;
         this.validator = validator;
         blockingStub = PasswordServiceGrpc.newBlockingStub(externalServiceChannel);
         asyncStub = PasswordServiceGrpc.newStub(externalServiceChannel);
-
     }// End Constructor
 
     /**
@@ -72,7 +81,7 @@ public class UserAccountResource {
      * Method that handles POST requests made to the endpoint '/users'. A new user will be added to the database with
      * the information passed in the request. The users password is not stored in the database but is sent to the
      * password server which will return a salt and hash for that password which will then also be saved with personal
-     * details.
+     * details. Application will check the connection to the gRPC service before making a request
      *
      * @param user
      * @return response status to client
@@ -95,9 +104,9 @@ public class UserAccountResource {
         }// end if
         if (ua == null) {
             //Hash users password and the account will be added to the database after.
-            try {
+            if (connectionStatus()) {
                 hash(user);
-            } catch (StatusRuntimeException ex) {
+            } else {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
             return Response.status(Response.Status.CREATED).entity("User account has been created").build();
@@ -108,7 +117,8 @@ public class UserAccountResource {
 
     /**
      * Method that handles PUT requests made to the endpoint '/users/{userId}' with an id. The user account matching the user id
-     * will be updated in the database with the data passed in the request.
+     * will be updated in the database with the data passed in the request. Application will check the connection to the
+     * gRPC service before making a request
      *
      * @param id
      * @param user
@@ -136,12 +146,12 @@ public class UserAccountResource {
             // on an existing entry in the map. To over come this problem the original account will be remove and then
             // the new account will be added to the map. a.k.a the UserAccountsDB
             //Add new updated entry details to the db:
-            try {
+            if (connectionStatus()) {
                 UserAccountDB.removeUserAccount(id);
                 hash(user);
                 //Return ok response to client
                 return Response.ok(user).entity("User account has been updated").build();
-            } catch (StatusRuntimeException ex) {
+            } else {
                 //Return bas request with runtime exception
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }//End try catch
@@ -218,7 +228,7 @@ public class UserAccountResource {
                 //Log incoming request
                 logger.info("Received request items");
                 //Creating a new User object with the now hashed password and salt
-                User newUser = new User(user.getUserId(), user.getUserName(), user.getEmail(),
+                User newUser = new User(userHashResponse.getUserId(), user.getUserName(), user.getEmail(),
                         userHashResponse.getSalt(), userHashResponse.getHashedPassword());
                 //Added the new user account to the database
                 UserAccountDB.addUserAccount(newUser.getUserId(), newUser);
@@ -268,4 +278,15 @@ public class UserAccountResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }// End try catch
     }// End validate request method
+
+    /**
+     * @return connection status
+     */
+    public boolean connectionStatus() {
+        if (externalServiceChannel.getState(true) == TRANSIENT_FAILURE) {
+            return false;
+        } else {
+            return true;
+        }//End if else
+    }//End method
 }// End class
